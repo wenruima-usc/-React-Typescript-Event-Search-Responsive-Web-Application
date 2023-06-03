@@ -1,1 +1,1 @@
-# -React-Typescript-Event-Search-Responsive-Web-Application
+# React-Typescript-Event-Search-Responsive-Web-Application
