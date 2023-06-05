@@ -1,3 +1,9 @@
+import { SearchForm } from "../components/SearchForm";
+
 export function Search(){
-    return <h1>Search</h1>
+    return (<>
+    <div className="container-fluid"></div>
+    <SearchForm></SearchForm>
+    </>);
+
 }

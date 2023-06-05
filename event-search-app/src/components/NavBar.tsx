@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 export function NavBar(){
     return (
-        <Container>
-            <Nav>
+        <Container className="mt-3">
+            <Nav className="justify-content-end">
                 <Nav.Link to="/search" as={NavLink} className="nav-link">
                     Search
                 </Nav.Link>
