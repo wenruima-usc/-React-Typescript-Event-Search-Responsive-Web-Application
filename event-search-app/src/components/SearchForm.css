@@ -21,3 +21,15 @@ label{
 	color: #79A3BE;
 	font-size: 15px;
 }
+.autocomplete-ul{
+    background-color: white;
+    list-style-type: none;
+    padding-left: 0px;
+}
+.autocomplete-li{
+    color: black;
+    padding: 10px;
+}
+.autocomplete-li:hover{
+    background-color: gainsboro;
+}

@@ -1,12 +1,57 @@
 import { Card, Form,Col,Row, Container, FormGroup,Button } from "react-bootstrap";
 import "./SearchForm.css";
-import React, { useState } from 'react';
+import Spinner from 'react-bootstrap/Spinner';
+import React, { useEffect, useState, useRef} from 'react';
+import { BASE_URL } from "../constraints/BaseUrl";
 export function SearchForm(){
     const [isChecked, setCheckBox]=useState(false);
     const [location, setLocation]=useState('');
     const [keyword, setKeyword]=useState('');
     const [distance,setDistance]=useState('10');
     const [category,setCategory]=useState('Default');
+    const [suggestions,setSuggestions]=useState<string[]>([]);
+    const [selectedSuggestion, setSelectedSuggestion]=useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [showSuggestions,setShowSuggestions] = useState(false);
+    const suggestionsRef=useRef<HTMLUListElement>(null);
+
+    useEffect(()=>{
+        const handleClickOutside = (event:MouseEvent)=>{
+            if(suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)){
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('click',handleClickOutside);
+        return ()=>{
+            document.removeEventListener('click',handleClickOutside);
+        };
+    },[]);
+    
+    useEffect(()=>{
+        const fetchSuggestions= async ()=>{
+            try{
+                setIsLoading(true);
+                const response=await fetch(`${BASE_URL}/autocomplete/${keyword}`);
+                const data=await response.json();
+                setSuggestions(data);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error fetching suggestions", error);
+            }
+        };
+        if(keyword && keyword != selectedSuggestion){
+            fetchSuggestions();
+        }
+        else {
+            setSuggestions([]);
+        }
+    },[keyword,selectedSuggestion]);
+
+    const handleSuggestionClick= (suggestion: string)=>{
+        setKeyword(suggestion);
+        setSelectedSuggestion(suggestion);
+        setSuggestions([]);
+    };
 
     const  handleCheckBoxChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
         setCheckBox(event.target.checked);
@@ -19,6 +64,7 @@ export function SearchForm(){
 
     const handleKeywordChange=(event:React.ChangeEvent<HTMLInputElement>) => {
         setKeyword(event.target.value);
+        setShowSuggestions(true);
     }
 
     const handleDistanceChange=(event:React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +111,20 @@ export function SearchForm(){
                                 <Form.Group as={Col} controlId="keyword">
                                     <Form.Label>Keyword<span style={{color:"red"}}>*</span></Form.Label>
                                     <Form.Control type="text" required value={keyword} onChange={handleKeywordChange}></Form.Control>
+                                    {isLoading? (
+                                        <div style={{backgroundColor:'white'}}>
+                                            <Spinner animation="border" role="status" style={{color: '#35579D',margin:'10px',height:'1.5rem',width:'1.5rem',borderWidth:'2px'}}> </Spinner>
+                                        </div>
+                                                ):(
+                                    suggestions.length > 0 && showSuggestions && (
+                                        <ul className="autocomplete-ul" ref={suggestionsRef}>
+                                            {suggestions.map((suggestion,index)=>(
+                                                <li className="autocomplete-li" key={index} onClick={()=>handleSuggestionClick(suggestion)}>
+                                                    {suggestion}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ))}
                                 </Form.Group>
                             </Row>
                             <Row className="mb-3">
