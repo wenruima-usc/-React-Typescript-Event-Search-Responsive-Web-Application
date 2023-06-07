@@ -2,10 +2,12 @@ import { Card, Form,Col,Row, Container, FormGroup,Button } from "react-bootstrap
 import "./SearchForm.css";
 import Spinner from 'react-bootstrap/Spinner';
 import React, { useEffect, useState, useRef} from 'react';
-import { BASE_URL } from "../constraints/BaseUrl";
+import { CONSTRAINTS } from "../constraints/constraints";
 export function SearchForm(){
     const [isChecked, setCheckBox]=useState(false);
     const [location, setLocation]=useState('');
+    const [lat,setLat]=useState('');
+    const [lng,setLng]=useState('');
     const [keyword, setKeyword]=useState('');
     const [distance,setDistance]=useState('10');
     const [category,setCategory]=useState('Default');
@@ -31,7 +33,7 @@ export function SearchForm(){
         const fetchSuggestions= async ()=>{
             try{
                 setIsLoading(true);
-                const response=await fetch(`${BASE_URL}/autocomplete/${keyword}`);
+                const response=await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/autocomplete/${keyword}`);
                 const data=await response.json();
                 setSuggestions(data);
                 setIsLoading(false);
@@ -75,12 +77,35 @@ export function SearchForm(){
         setCategory(event.target.value);
     }
 
-    const handleSubmit=(event:React.FormEvent)=>{
+    const handleSubmit= async (event:React.FormEvent)=>{
         event.preventDefault();
         console.log("Keyword",keyword);
         console.log("Distance",distance);
         console.log("Cat",category);
         console.log("Location",location);
+        try {
+            if (isChecked){
+                const response = await fetch(`${CONSTRAINTS.IPINFO_BASE_URL}token=${CONSTRAINTS.IPINFO_TOKEN}`);
+                const data=await response.json();
+                const loc=data['loc'].split(',');
+                setLat(loc[0]);
+                setLng(loc[1]);
+                console.log("Lat",lat);
+                console.log("Lng",lng);
+            }
+            else{
+                const response = await fetch(`${CONSTRAINTS.GOOGLE_BASE_URL}address=${location}&key=${CONSTRAINTS.GOOGLE_TOKEN}`);
+                const data= await response.json();
+                setLat(data.results[0].geometry.location.lat);
+                setLng(data.results[0].geometry.location.lng);
+                console.log("Lat",lat);
+                console.log("Lng",lng);
+                
+            }
+
+        } catch(error){
+            console.error("Error fetching lng and lat", error);
+        }
         
     }
 
@@ -91,10 +116,6 @@ export function SearchForm(){
         setCheckBox(false);
         setLocation("");
     }
-
-
-
-
 
     return (
         <>

@@ -1,1 +1,0 @@
-export const BASE_URL= "https://csci571hw8-4869.wl.r.appspot.com";
