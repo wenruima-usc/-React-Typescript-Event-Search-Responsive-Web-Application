@@ -3,6 +3,7 @@ import "./SearchForm.css";
 import Spinner from 'react-bootstrap/Spinner';
 import React, { useEffect, useState, useRef} from 'react';
 import { CONSTRAINTS } from "../constraints/constraints";
+import ResultTable from "./ResultTable";
 export function SearchForm(){
     const [isChecked, setCheckBox]=useState(false);
     const [location, setLocation]=useState('');
@@ -15,7 +16,9 @@ export function SearchForm(){
     const [selectedSuggestion, setSelectedSuggestion]=useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showSuggestions,setShowSuggestions] = useState(false);
+    const [showResult, setShowResult] = useState(false);
     const suggestionsRef=useRef<HTMLUListElement>(null);
+    const [items,setItems]=useState([]);
 
     useEffect(()=>{
         const handleClickOutside = (event:MouseEvent)=>{
@@ -77,12 +80,16 @@ export function SearchForm(){
         setCategory(event.target.value);
     }
 
+    const getSearchResult = async ()=>{
+        const response=await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/search/${keyword}/${category}/${distance}/${lat}/${lng}`);
+        const res= await response.json();
+        const dataList=res.data;
+        setItems(dataList);
+        setShowResult(true);
+    }
+
     const handleSubmit= async (event:React.FormEvent)=>{
         event.preventDefault();
-        console.log("Keyword",keyword);
-        console.log("Distance",distance);
-        console.log("Cat",category);
-        console.log("Location",location);
         try {
             if (isChecked){
                 const response = await fetch(`${CONSTRAINTS.IPINFO_BASE_URL}token=${CONSTRAINTS.IPINFO_TOKEN}`);
@@ -92,6 +99,8 @@ export function SearchForm(){
                 setLng(loc[1]);
                 console.log("Lat",lat);
                 console.log("Lng",lng);
+                getSearchResult();
+                
             }
             else{
                 const response = await fetch(`${CONSTRAINTS.GOOGLE_BASE_URL}address=${location}&key=${CONSTRAINTS.GOOGLE_TOKEN}`);
@@ -100,7 +109,7 @@ export function SearchForm(){
                 setLng(data.results[0].geometry.location.lng);
                 console.log("Lat",lat);
                 console.log("Lng",lng);
-                
+                getSearchResult();  
             }
 
         } catch(error){
@@ -115,6 +124,7 @@ export function SearchForm(){
         setCategory("Default");
         setCheckBox(false);
         setLocation("");
+        setShowResult(false);
     }
 
     return (
@@ -193,6 +203,10 @@ export function SearchForm(){
                 </Card>
                 </Col>
             </Row>
+            {showResult && 
+            <ResultTable 
+                items={items}
+            />}
             </Container>
         </>
     );
