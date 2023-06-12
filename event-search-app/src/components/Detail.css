@@ -14,15 +14,21 @@
     font-size: 22px;
 }
 
-
-button :hover{
+/* button :hover{
     color: white;
-}
+} */
 .back{
     color: white;
     background-color: transparent;
     text-decoration: underline;
 }
+
+.btn :hover{
+    color: inherit !important;
+    background-color: inherit !important;
+    border-color:  inherit !important;
+}
+
 i{
     vertical-align: middle;
 }
