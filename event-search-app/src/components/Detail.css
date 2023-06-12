@@ -12,6 +12,7 @@
     text-align: center;
     padding-bottom: 15px;
     font-size: 22px;
+    border:none;
 }
 
 /* button :hover{
@@ -61,11 +62,9 @@ span{
 
 .mat-tab-header {
     background-color: #159C89;
+    color: white;
   }
 
-.mat-tab-label{
-    color: white;
-}
 
 .entryName{
 	font-weight: bold;
