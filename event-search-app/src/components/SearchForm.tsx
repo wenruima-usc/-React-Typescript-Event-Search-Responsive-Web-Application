@@ -80,7 +80,9 @@ export function SearchForm(){
         setCategory(event.target.value);
     }
 
-    const getSearchResult = async ()=>{
+    const getSearchResult = async (lat:string,lng:string)=>{
+        console.log(lat);
+        console.log(lng);
         const response=await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/search/${keyword}/${category}/${distance}/${lat}/${lng}`);
         const res= await response.json();
         const dataList=res.data;
@@ -88,28 +90,48 @@ export function SearchForm(){
         setShowResult(true);
     }
 
+    const getIpInfo= async ()=>{
+        try{
+            const response = await fetch(`${CONSTRAINTS.IPINFO_BASE_URL}token=${CONSTRAINTS.IPINFO_TOKEN}`);
+            const data=await response.json();
+            const loc=data['loc'].split(',');
+            // setLat(loc[0]);
+            // setLng(loc[1]);
+            const lat=loc[0];
+            const lng=loc[1];
+            getSearchResult(lat,lng);
+        } catch(error){
+            console.error("Error fetching ipinfo: ",error);
+        }
+    }
+
+    const getGeoData= async ()=>{
+        try{
+            const response = await fetch(`${CONSTRAINTS.GOOGLE_BASE_URL}address=${location}&key=${CONSTRAINTS.GOOGLE_TOKEN}`);
+            const data= await response.json();
+            const lat=data.results[0].geometry.location.lat;
+            const lng=data.results[0].geometry.location.lng;
+            getSearchResult(lat,lng);
+        } catch (error){
+            console.error("Error fetching google geo data: ",error);
+        }
+    }
+
     const handleSubmit= async (event:React.FormEvent)=>{
         event.preventDefault();
         try {
             if (isChecked){
-                const response = await fetch(`${CONSTRAINTS.IPINFO_BASE_URL}token=${CONSTRAINTS.IPINFO_TOKEN}`);
-                const data=await response.json();
-                const loc=data['loc'].split(',');
-                setLat(loc[0]);
-                setLng(loc[1]);
-                console.log("Lat",lat);
-                console.log("Lng",lng);
-                getSearchResult();
-                
+                 getIpInfo();
+                // console.log(lat);
+                // console.log(lng);
+                // getSearchResult();
+
             }
             else{
-                const response = await fetch(`${CONSTRAINTS.GOOGLE_BASE_URL}address=${location}&key=${CONSTRAINTS.GOOGLE_TOKEN}`);
-                const data= await response.json();
-                setLat(data.results[0].geometry.location.lat);
-                setLng(data.results[0].geometry.location.lng);
-                console.log("Lat",lat);
-                console.log("Lng",lng);
-                getSearchResult();  
+                 getGeoData();
+                // console.log(lat);
+                // console.log(lng);
+                // getSearchResult();
             }
 
         } catch(error){

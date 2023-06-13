@@ -46,39 +46,48 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
         }
     }
 
+    const handleBackButtonClick= (): void=>{
+        setShowDetail(false);
+    }
+
     return (
         <div className='mt-5'>
             { showDetail ?  
-            <Detail eventDetailProps={eventDetail}/>
-            :(
-                <div className='table-responsive mt-5'>
-                <table className='table table-striped table-dark text-center col-md-10 mx-auto'>
-                    <thead>
-                        <tr>
-                            <th scope='col'>Date/Time</th>
-                            <th scope='col'>Icon</th>
-                            <th scope='col'>Event</th>
-                            <th scope='col'>Genre</th>
-                            <th scope='col'>Venue</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.map((item)=>(
-                            <tr key={item.id} onClick={()=>handleItemClick(item.id)}>
-                                <td scope='row'>{item.date} <br /> {item.time}</td>
-                                <td> <img src={item.icon} alt="Image" style={{width:'80px',height:'80px'}}/></td>
-                                <td>{item.event}</td>
-                                <td>{item.genre}</td>
-                                <td>{item.event}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            )}
+            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail}/>
+            :
+                (
+                    <div>
+                    {items.length !==0 ? (
+                    <div className='table-responsive mt-5'>
+                        <table className='table table-striped table-dark text-center col-md-10 mx-auto'>
+                            <thead>
+                                <tr>
+                                    <th scope='col'>Date/Time</th>
+                                    <th scope='col'>Icon</th>
+                                    <th scope='col'>Event</th>
+                                    <th scope='col'>Genre</th>
+                                    <th scope='col'>Venue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items.map((item)=>(
+                                    <tr key={item.id} onClick={()=>handleItemClick(item.id)}>
+                                        <td scope='row'>{item.date} <br /> {item.time}</td>
+                                        <td> <img src={item.icon} alt="Image" style={{width:'80px',height:'80px'}}/></td>
+                                        <td>{item.event}</td>
+                                        <td>{item.genre}</td>
+                                        <td>{item.event}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    ): 
+                    <div className="no-results mt-5 mb-5 col-md-6 mx-auto">No result available</div>
+                    }</div>
+                    )}
+                    </div>);
             
-        </div>
-    );
 }
 
 export default ResultTable;
