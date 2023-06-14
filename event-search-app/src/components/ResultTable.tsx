@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { CONSTRAINTS } from '../constraints/constraints';
 import Detail from './Detail';
 import './ResultTable.css';
+import {lastValueFrom} from "rxjs";
 interface Item{
     id:string,
     date:string,
@@ -30,16 +31,62 @@ export interface EventDetail{
     seatmap: string
 }
 
+export interface ArtistDetail{
+    name: string,
+    artistImg:string,
+    popularity:number,
+    followers:string,
+    spotifyUrl:string,
+    albums: Array<string>
+}
+
 const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     const [eventDetail,setEventDetail]=useState<EventDetail>({id:'',name:'',date:'',artist:'',venue:'',genre:'',priceRange:'',status:'',buyTicketAt:'',seatmap:''});
+    const [artistDetail,setArtistDetail]=useState<ArtistDetail[]>([]);
+    const [isMusicArtist,setIsMusicArtist]=useState(false);
     const [showDetail, setShowDetail]=useState(false);
 
+    const isMusicRelated=(genre:string):boolean=>{
+        if(genre==""){
+            return false;
+          }
+          let genres=genre.replace(' ','').split('|');
+          if(genres[0].toLowerCase()=="music"){
+            return true;
+          }
+          return false;
+    }
+
+    const getArtistDetail=async (artists:Array<string>)=>{
+        const promises: Promise<ArtistDetail>[]= artists.map((artist)=>
+            fetch(`${CONSTRAINTS.SERVER_BASE_URL}/searchArtist/${artist}`).then((response)=>(
+                response.json())
+            ));
+        Promise.all(promises).then((responses:ArtistDetail[])=>{
+            const filteredResponses=responses.filter((response)=>
+                response.name !== '' ||
+                response.artistImg !== '' ||
+                response.followers !== '' ||
+                response.popularity !== 0 ||
+                response.spotifyUrl !== '' ||
+                response.albums.length > 0
+            );
+            setArtistDetail(filteredResponses);
+        }).catch((error)=>{
+            console.error("Error fetching Artist Detail: ", error);
+        });
+    }
 
     const handleItemClick= async (id:string)=>{
         try{
             const response= await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/eventDetail/${id}`);
             const res= await response.json();
             setEventDetail(res.data);
+            if(res.data.artist && isMusicRelated(res.data.genre)){
+                setIsMusicArtist(true);
+                const artists=res.data.artist.replace(' ','').split('|');
+                getArtistDetail(artists);
+            }
             setShowDetail(true);
         } catch(error){
             console.error("Error getting event detail: ",error);

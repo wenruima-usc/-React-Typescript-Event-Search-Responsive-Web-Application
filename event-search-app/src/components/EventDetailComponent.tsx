@@ -3,11 +3,24 @@ import { EventDetail } from './ResultTable';
 import "./EventDetailComponent.css";
 import { Rowing } from '@mui/icons-material';
 import { Col,Row } from 'react-bootstrap';
+import {FaFacebookSquare,FaTwitter} from 'react-icons/fa'
 interface eventDetailProps{
     eventDetailProps:EventDetail
 }
+
 const EventDetailComponent:React.FC<eventDetailProps>=({eventDetailProps})=>{
+    const shareOnTwitter= ():void=>{
+        const tweetText=`Check out ${eventDetailProps.name} on Ticketmaster: ${eventDetailProps.buyTicketAt}`;
+        const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+        window.open(tweetUrl, '_blank');
+}
+
+const shareOnFacebook=():void=>{
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${eventDetailProps.buyTicketAt}`;
+    window.open(facebookUrl, '_blank');
+}
     return (
+        <>
         <Row className='mt-5  align-items-center'>
             <Col md={6}>
                 <Row>
@@ -31,14 +44,14 @@ const EventDetailComponent:React.FC<eventDetailProps>=({eventDetailProps})=>{
                     }
                     {eventDetailProps.genre && 
                         <Col sm={12} className="mb-3 text-center align-items-center" style={{color: "white"}}>
-                            <p className="entryName">Artist/Team</p>
-                            <p className="entryValue">{eventDetailProps.artist}</p>
+                            <p className="entryName">Genres</p>
+                            <p className="entryValue">{eventDetailProps.genre}</p>
                         </Col>
                     }
                     {eventDetailProps.priceRange && 
                         <Col sm={12} className="mb-3 text-center align-items-center" style={{color: "white"}}>
                             <p className="entryName">Price Ranges</p>
-                            <p className="entryValue">{eventDetailProps.priceRange}</p>
+                            <p className="entryValue">{eventDetailProps.priceRange+" USD"}</p>
                         </Col>
                     }
                     {eventDetailProps.status && 
@@ -63,12 +76,24 @@ const EventDetailComponent:React.FC<eventDetailProps>=({eventDetailProps})=>{
                     }
                 </Row>
             </Col>
-            <Col md={6} className="text-center">
+            <Col md={6} className="text-center justify-content-center align-items-center d-flex">
                 {eventDetailProps.seatmap && 
                     <img src={eventDetailProps.seatmap} style={{width: "350px"}}/>
                 }
             </Col>
         </Row>
+        <Row className='mt-3'>
+            <Col sm={12} className="text-center align-items-center" style={{color:"white",fontSize:"16px"}}>
+                Share on:
+                <button className='btn btn-sm' onClick={shareOnTwitter}>
+                    <FaTwitter className="twitter-icon" size={32} />
+                </button>
+                <button className='btn btn-sm' onClick={shareOnFacebook}>
+                    <FaFacebookSquare className="facebook-icon" size={32} />
+                </button>
+            </Col>
+        </Row>
+        </>
     );
 };
 

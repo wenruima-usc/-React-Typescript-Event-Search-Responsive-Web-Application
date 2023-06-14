@@ -81,8 +81,6 @@ export function SearchForm(){
     }
 
     const getSearchResult = async (lat:string,lng:string)=>{
-        console.log(lat);
-        console.log(lng);
         const response=await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/search/${keyword}/${category}/${distance}/${lat}/${lng}`);
         const res= await response.json();
         const dataList=res.data;
@@ -95,8 +93,6 @@ export function SearchForm(){
             const response = await fetch(`${CONSTRAINTS.IPINFO_BASE_URL}token=${CONSTRAINTS.IPINFO_TOKEN}`);
             const data=await response.json();
             const loc=data['loc'].split(',');
-            // setLat(loc[0]);
-            // setLng(loc[1]);
             const lat=loc[0];
             const lng=loc[1];
             getSearchResult(lat,lng);
@@ -122,16 +118,9 @@ export function SearchForm(){
         try {
             if (isChecked){
                  getIpInfo();
-                // console.log(lat);
-                // console.log(lng);
-                // getSearchResult();
-
             }
             else{
                  getGeoData();
-                // console.log(lat);
-                // console.log(lng);
-                // getSearchResult();
             }
 
         } catch(error){
