@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EventDetail } from './ResultTable';
+import { ArtistDetail, EventDetail } from './ResultTable';
 import {Button} from "react-bootstrap";
 import EventDetailComponent from './EventDetailComponent';
 import './Detail.css';
@@ -9,9 +9,10 @@ import TabPanel from './TabPanel';
 interface DetailProps{
     onClick: ()=>void;
     eventDetailProps: EventDetail
+    artistDetailProps: ArtistDetail[]
 }
 
-const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps}) =>{
+const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProps}) =>{
     const [selectedTab, setSelectedTab]=useState(0);
     const tabs=[
         {label:'Events'},
@@ -51,7 +52,7 @@ const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps}) =>{
                     {tabs.map((tab,index)=>(
                         <TabPanel key={index} value={selectedTab} index={index}>
                             {index===0 && <EventDetailComponent eventDetailProps={eventDetailProps}></EventDetailComponent>}
-                            {index===1 && <div>Tab 1</div>}
+                            {index===1 && <div>{artistDetailProps[0].name}</div>}
                             {index===2 && <div>Tab 2</div>}
 
                         </TabPanel>

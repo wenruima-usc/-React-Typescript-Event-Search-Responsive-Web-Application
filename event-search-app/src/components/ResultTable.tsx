@@ -18,6 +18,10 @@ interface ResultTableProps{
     items:Item[]
 }
 
+interface ArtistListResponse{
+    data: ArtistDetail
+}
+
 export interface EventDetail{
     id: string,
     name: string,
@@ -58,12 +62,12 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     }
 
     const getArtistDetail=async (artists:Array<string>)=>{
-        const promises: Promise<ArtistDetail>[]= artists.map((artist)=>
+        const promises: Promise<ArtistListResponse>[]= artists.map((artist)=>
             fetch(`${CONSTRAINTS.SERVER_BASE_URL}/searchArtist/${artist}`).then((response)=>(
                 response.json())
             ));
-        Promise.all(promises).then((responses:ArtistDetail[])=>{
-            const filteredResponses=responses.filter((response)=>
+        Promise.all(promises).then((responses:ArtistListResponse[])=>{
+            const filteredResponses=responses.map((response)=>response.data).filter((response)=>
                 response.name !== '' ||
                 response.artistImg !== '' ||
                 response.followers !== '' ||
@@ -71,7 +75,9 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
                 response.spotifyUrl !== '' ||
                 response.albums.length > 0
             );
+            console.log(filteredResponses);
             setArtistDetail(filteredResponses);
+            setShowDetail(true);
         }).catch((error)=>{
             console.error("Error fetching Artist Detail: ", error);
         });
@@ -87,7 +93,6 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
                 const artists=res.data.artist.replace(' ','').split('|');
                 getArtistDetail(artists);
             }
-            setShowDetail(true);
         } catch(error){
             console.error("Error getting event detail: ",error);
         }
@@ -100,7 +105,7 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     return (
         <div className='mt-5'>
             { showDetail ?  
-            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail}/>
+            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail} artistDetailProps={artistDetail}/>
             :
                 (
                     <div>
