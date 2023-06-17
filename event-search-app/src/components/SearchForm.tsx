@@ -7,8 +7,6 @@ import ResultTable from "./ResultTable";
 export function SearchForm(){
     const [isChecked, setCheckBox]=useState(false);
     const [location, setLocation]=useState('');
-    const [lat,setLat]=useState('');
-    const [lng,setLng]=useState('');
     const [keyword, setKeyword]=useState('');
     const [distance,setDistance]=useState('10');
     const [category,setCategory]=useState('Default');

@@ -1,0 +1,15 @@
+.no-results{
+    background-color: white;
+    color: #F0113D;
+    text-align: center;
+    border-radius: 3rem;
+}
+
+.artist{
+    color: #76FFE3;
+    font-size: 17px;
+}
+
+.carousel-control-next-icon, .carousel-control-prev-icon {
+    filter: invert(100%);
+  }

@@ -93,6 +93,9 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
                 const artists=res.data.artist.replace(' ','').split('|');
                 getArtistDetail(artists);
             }
+            else{
+                setShowDetail(true);
+            }
         } catch(error){
             console.error("Error getting event detail: ",error);
         }
@@ -105,7 +108,7 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     return (
         <div className='mt-5'>
             { showDetail ?  
-            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail} artistDetailProps={artistDetail}/>
+            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail} artistDetailProps={artistDetail} isMusicArtist={isMusicArtist}/>
             :
                 (
                     <div>

@@ -6,13 +6,15 @@ import './Detail.css';
 import {FaChevronLeft,FaRegHeart} from 'react-icons/fa'
 import {Tabs,Tab,Paper} from "@mui/material"
 import TabPanel from './TabPanel';
+import ArtistDetailComponent from './ArtistDetailComponent';
 interface DetailProps{
     onClick: ()=>void;
-    eventDetailProps: EventDetail
-    artistDetailProps: ArtistDetail[]
+    eventDetailProps: EventDetail,
+    artistDetailProps: ArtistDetail[],
+    isMusicArtist: boolean
 }
 
-const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProps}) =>{
+const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProps,isMusicArtist}) =>{
     const [selectedTab, setSelectedTab]=useState(0);
     const tabs=[
         {label:'Events'},
@@ -52,7 +54,9 @@ const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProp
                     {tabs.map((tab,index)=>(
                         <TabPanel key={index} value={selectedTab} index={index}>
                             {index===0 && <EventDetailComponent eventDetailProps={eventDetailProps}></EventDetailComponent>}
-                            {index===1 && <div>{artistDetailProps[0].name}</div>}
+                            {index===1 && ((isMusicArtist || artistDetailProps.length!=0 )? <ArtistDetailComponent artistDetailProps={artistDetailProps}></ArtistDetailComponent>
+                             : 
+                            <div className="no-results col-md-6 mx-auto" style={{fontSize:"18px",marginTop:"7rem",marginBottom:"7rem"}}>No music related artist details to show</div>)}
                             {index===2 && <div>Tab 2</div>}
 
                         </TabPanel>
