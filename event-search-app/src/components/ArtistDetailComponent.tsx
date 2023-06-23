@@ -1,8 +1,8 @@
-import React ,{useRef} from 'react';
+import React ,{useState} from 'react';
 import "./ArtistDetailComponent.css"
 import { ArtistDetail } from './ResultTable';
 import {Row,Col} from 'react-bootstrap';
-import CircularProgress from "@mui/material/CircularProgress";
+import CircularProgress from '@mui/joy/CircularProgress';
 import { FaSpotify } from 'react-icons/fa';
 import  Carousel  from 'react-bootstrap/Carousel';
 interface ArtistDetailProps{
@@ -10,29 +10,17 @@ interface ArtistDetailProps{
 }
 
 const ArtistDetailComponent:React.FC<ArtistDetailProps>=({artistDetailProps})=>{
-    const carouselRef=useRef<Carousel>(null);
-    const handlePrev= ()=>{
-        if(carouselRef.current){
-            carouselRef.current.prev();
-        }
-    }
+    const [activeIndex,setActiveIndex] = useState(0);
+
+    const handleSelect = (selectedIndex:number) => {
+        setActiveIndex(selectedIndex);
+      };
     return (
-        <div id="carouselExampleControls" className="carousel slide carousel-container" data-ride="carousel">
-            { artistDetailProps.length>1 && 
-        <a href="#carouselExampleControls" className="carousel-control-prev" role="button" data-slide="prev">
-            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-            
-        </a>
-        } 
-        {artistDetailProps.length>1 && 
-        <a href="#carouselExampleControls" className='carousel-control-next' role="button" data-slide="next">
-            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-            
-        </a>
-        }
-            <div className='carousel-inner'>
-                {artistDetailProps.map((artistDetail,index)=>(
-                    <div key={index} className={`carousel-item artist pl-5 pr-5 container-fluid ${index==0? 'active':''}`}>
+    
+            <Carousel  activeIndex={activeIndex} onSelect={handleSelect}>
+        
+                {artistDetailProps.map((artistDetail)=>(
+                    <Carousel.Item className='artist pl-5 pr-5'>
                         <Row className="mt-3 ml-3 mr-3">
                             <Col md={3} className="text-center">
                                 <img src={artistDetail.artistImg} alt="No image" style={{borderRadius:"50%",width:"120px",height:"120px"}}/>
@@ -42,9 +30,11 @@ const ArtistDetailComponent:React.FC<ArtistDetailProps>=({artistDetailProps})=>{
                                 <div className='pt-4'>
                                     <p>Popularity</p>
                                     <div>
-                                        <div style={{color:"white",fontSize:"16px",paddingTop:"0.3rem"}} className="mx-auto mt-3">
-                                            {artistDetail.popularity}
-                                            <CircularProgress variant="determinate" value={artistDetail.popularity} color="primary" size={40} sx={{mx:'auto',display:"flex",top:'-30px'}}/>
+                                        <div  className="mx-auto mt-3">
+                                            <CircularProgress size="md" determinate value={artistDetail.popularity} variant="plain" color="danger">
+                                                <div style={{color:'white',fontSize:'13px'}}>{artistDetail.popularity}</div>
+                                            </CircularProgress>
+
                                         </div>
                                     </div>
                                 </div>
@@ -72,10 +62,10 @@ const ArtistDetailComponent:React.FC<ArtistDetailProps>=({artistDetailProps})=>{
                                 </Col>
                             ))}
                         </Row>
-                    </div>
+                    </Carousel.Item>
                 ))}
-            </div>  
-        </div>
+        
+        </Carousel>   
     );
 }
 

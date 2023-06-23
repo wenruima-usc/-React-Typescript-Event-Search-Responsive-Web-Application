@@ -13,3 +13,24 @@
 .carousel-control-next-icon, .carousel-control-prev-icon {
     filter: invert(100%);
   }
+
+  
+  .carousel-control-prev{
+      padding-right:80px;
+  }
+  .carousel-control-next{
+      padding-left: 80px;
+  }
+
+
+  .progress {
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .value{
+position: absolute;
+top:50%;
+left:50%;
+transform: translate(-50%,-50%);
+  }
