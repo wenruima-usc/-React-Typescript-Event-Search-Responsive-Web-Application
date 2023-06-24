@@ -195,9 +195,9 @@ export function SearchForm(){
                                 </Form.Group>
                             </Row>
                             <Row className="mb-3">
-                                <FormGroup controlId="auto">
+                                <Form.Group controlId="auto">
                                     <Form.Check type="checkbox" checked={isChecked} onChange={handleCheckBoxChange} label="Auto-detect your location"></Form.Check>
-                                </FormGroup>
+                                </Form.Group>
                             </Row>
                             <div className="mb-3 d-flex justify-content-center">
                                 <div className="mx-2"> 

@@ -44,9 +44,19 @@ export interface ArtistDetail{
     albums: Array<string>
 }
 
+export interface VenueDetail{
+    name:string,
+    address:string,
+    phoneNum: string,
+    openHours: string,
+    generalRule: string,
+    childRule: string
+}
+
 const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     const [eventDetail,setEventDetail]=useState<EventDetail>({id:'',name:'',date:'',artist:'',venue:'',genre:'',priceRange:'',status:'',buyTicketAt:'',seatmap:''});
     const [artistDetail,setArtistDetail]=useState<ArtistDetail[]>([]);
+    const [venueDetail, setVenueDetail]= useState<VenueDetail>({name:'',address:'',phoneNum: '',openHours: '',generalRule: '',childRule: ''});
     const [isMusicArtist,setIsMusicArtist]=useState(false);
     const [showDetail, setShowDetail]=useState(false);
 
@@ -59,6 +69,14 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
             return true;
           }
           return false;
+    }
+
+    const getVenueDetail = async (venue:string)=>{
+        const response= await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/venueDetail/${venue}`);
+        const res= await response.json();
+        setVenueDetail(res.data);
+        setShowDetail(true);
+        
     }
 
     const getArtistDetail=async (artists:Array<string>)=>{
@@ -77,7 +95,6 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
             );
             console.log(filteredResponses);
             setArtistDetail(filteredResponses);
-            setShowDetail(true);
         }).catch((error)=>{
             console.error("Error fetching Artist Detail: ", error);
         });
@@ -93,9 +110,8 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
                 const artists=res.data.artist.replace(' ','').split('|');
                 getArtistDetail(artists);
             }
-            else{
-                setShowDetail(true);
-            }
+            getVenueDetail(res.data.venue);
+            
         } catch(error){
             console.error("Error getting event detail: ",error);
         }
@@ -108,7 +124,7 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     return (
         <div className='mt-5'>
             { showDetail ?  
-            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail} artistDetailProps={artistDetail} isMusicArtist={isMusicArtist}/>
+            <Detail onClick={handleBackButtonClick} eventDetailProps={eventDetail} artistDetailProps={artistDetail} venueDetailProps={venueDetail} isMusicArtist={isMusicArtist}/>
             :
                 (
                     <div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArtistDetail, EventDetail } from './ResultTable';
+import { ArtistDetail, EventDetail, VenueDetail } from './ResultTable';
 import {Button} from "react-bootstrap";
 import EventDetailComponent from './EventDetailComponent';
 import './Detail.css';
@@ -7,14 +7,16 @@ import {FaChevronLeft,FaRegHeart} from 'react-icons/fa'
 import {Tabs,Tab,Paper} from "@mui/material"
 import TabPanel from './TabPanel';
 import ArtistDetailComponent from './ArtistDetailComponent';
+import VenueDetailComponent from './VenueDetailComponent';
 interface DetailProps{
     onClick: ()=>void;
     eventDetailProps: EventDetail,
     artistDetailProps: ArtistDetail[],
+    venueDetailProps: VenueDetail
     isMusicArtist: boolean
 }
 
-const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProps,isMusicArtist}) =>{
+const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProps, venueDetailProps,isMusicArtist}) =>{
     const [selectedTab, setSelectedTab]=useState(0);
     const tabs=[
         {label:'Events'},
@@ -57,16 +59,9 @@ const Detail: React.FC<DetailProps>= ({onClick,eventDetailProps,artistDetailProp
                             {index===1 && ((isMusicArtist || artistDetailProps.length!=0 )? <ArtistDetailComponent artistDetailProps={artistDetailProps}></ArtistDetailComponent>
                              : 
                             <div className="no-results col-md-6 mx-auto" style={{fontSize:"18px",marginTop:"7rem",marginBottom:"7rem"}}>No music related artist details to show</div>)}
-                            {index===2 && <div>Tab 2</div>}
-
+                            {index===2 && <VenueDetailComponent venueDetailProps={venueDetailProps}></VenueDetailComponent>}
                         </TabPanel>
                     ))}
-                    {/* <Tabs indicatorColor="primary" textColor="inherit" centered className='mat-tab-header'>
-                        <Tab key='0' label="Tab 1"></Tab>
-                        <Tab key='1' label="Tab 2"></Tab>
-                        <Tab key='2' label="Tab 3"></Tab>
-                    </Tabs>  */}
-
             </div>
         </div>
     );
