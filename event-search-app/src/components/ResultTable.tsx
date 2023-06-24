@@ -4,6 +4,7 @@ import { CONSTRAINTS } from '../constraints/constraints';
 import Detail from './Detail';
 import './ResultTable.css';
 import {lastValueFrom} from "rxjs";
+import { getGeneratedNameForNode } from 'typescript';
 interface Item{
     id:string,
     date:string,
@@ -50,13 +51,15 @@ export interface VenueDetail{
     phoneNum: string,
     openHours: string,
     generalRule: string,
-    childRule: string
+    childRule: string,
+    lat:string,
+    lng:string
 }
 
 const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
     const [eventDetail,setEventDetail]=useState<EventDetail>({id:'',name:'',date:'',artist:'',venue:'',genre:'',priceRange:'',status:'',buyTicketAt:'',seatmap:''});
     const [artistDetail,setArtistDetail]=useState<ArtistDetail[]>([]);
-    const [venueDetail, setVenueDetail]= useState<VenueDetail>({name:'',address:'',phoneNum: '',openHours: '',generalRule: '',childRule: ''});
+    const [venueDetail, setVenueDetail]= useState<VenueDetail>({name:'',address:'',phoneNum: '',openHours: '',generalRule: '',childRule: '',lat:'',lng:''});
     const [isMusicArtist,setIsMusicArtist]=useState(false);
     const [showDetail, setShowDetail]=useState(false);
 
@@ -71,10 +74,13 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
           return false;
     }
 
+
     const getVenueDetail = async (venue:string)=>{
         const response= await fetch(`${CONSTRAINTS.SERVER_BASE_URL}/venueDetail/${venue}`);
         const res= await response.json();
-        setVenueDetail(res.data);
+        const geoRes= await fetch(`${CONSTRAINTS.GOOGLE_BASE_URL}address=${res.data.address}&key=${CONSTRAINTS.GOOGLE_TOKEN}`);
+        const geoData=await geoRes.json();
+        setVenueDetail({...res.data,lat:geoData.results[0].geometry.location.lat,lng:geoData.results[0].geometry.location.lng});
         setShowDetail(true);
         
     }

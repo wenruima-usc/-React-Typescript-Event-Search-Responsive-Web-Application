@@ -1,8 +1,10 @@
-import React ,{useState} from 'react';
+import React ,{useEffect, useState} from 'react';
 import { VenueDetail } from './ResultTable';
 import "./VenueDetailComponent.css"
-import {Row,Col} from 'react-bootstrap';
+import {Row,Col,Button} from 'react-bootstrap';
 import {FaAngleDown,FaAngleUp} from 'react-icons/fa';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { CONSTRAINTS } from '../constraints/constraints';
 interface VenueDetailProps{
     venueDetailProps:VenueDetail
 }
@@ -10,9 +12,17 @@ const VenueDetailComponent: React.FC<VenueDetailProps> = ({venueDetailProps})=>{
     const [openHourExpanded,setOpenHourExpanded]=useState(false);
     const [generalRuleExpanded,setGeneralRuleExpanded]=useState(false);
     const [childRuleExpanded,setChildRuleExpanded]=useState(false);
-
+    const mapOptions={
+        center: {lat:parseFloat(venueDetailProps.lat),lng: parseFloat(venueDetailProps.lng)}
+    };
+    const markerPosition={
+        lat: parseFloat(venueDetailProps.lat),
+        lng: parseFloat(venueDetailProps.lng)
+    };
+    
 
     return (
+        <>
         <Row className="mt-5" style={{color:'white'}}>
             <Col md={6} className="text-center align-items-center">
                 <Row>
@@ -140,6 +150,39 @@ const VenueDetailComponent: React.FC<VenueDetailProps> = ({venueDetailProps})=>{
                 </Row>
             </Col>
         </Row>
+        <Row className='mt-5 mb-3'>
+            <Col sm={12} className="text-center align-items-center">
+                <Button className="btn-danger" data-toggle="modal" data-target="modal" style={{fontSize:"18px"}}> 
+                    Show venue on Google map
+                </Button>
+            </Col>
+        </Row>
+        <div className='modal fade' id="modal" tabIndex={-1} role="dialog" aria-labelledby='modalLabel' aria-hidden="true">
+            <div className='modal-dialog' role="document">
+                <div className="modal-content">
+                    <div className='modal-header'>
+                        <h5 className='modal-title' id="modalLabel" style={{fontSize:"20px",fontWeight:"bold"}}>
+                            Event Venue
+                        </h5>
+                    </div>
+                    <div className='modal-body'>
+                        <Row>
+                            <Col sm={12} className="my-google-map">
+                                <LoadScript googleMapsApiKey={CONSTRAINTS.GOOGLE_TOKEN}>
+                                    <GoogleMap
+                                        mapContainerStyle={{width:"auto",height:"400px"}}
+                                        options={mapOptions}
+                                    >
+                                    <Marker position={markerPosition}></Marker>
+                                    </GoogleMap>
+                                </LoadScript>
+                            </Col>
+                        </Row>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </>
     );
 }
 
