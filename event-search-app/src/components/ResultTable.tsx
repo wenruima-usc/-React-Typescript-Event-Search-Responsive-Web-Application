@@ -99,7 +99,6 @@ const ResultTable: React.FC<ResultTableProps>= ({items}) =>{
                 response.spotifyUrl !== '' ||
                 response.albums.length > 0
             );
-            console.log(filteredResponses);
             setArtistDetail(filteredResponses);
         }).catch((error)=>{
             console.error("Error fetching Artist Detail: ", error);

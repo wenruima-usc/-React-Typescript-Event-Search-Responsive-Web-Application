@@ -3,7 +3,7 @@ import { VenueDetail } from './ResultTable';
 import "./VenueDetailComponent.css"
 import {Row,Col,Button} from 'react-bootstrap';
 import {FaAngleDown,FaAngleUp} from 'react-icons/fa';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, useLoadScript } from '@react-google-maps/api';
 import { CONSTRAINTS } from '../constraints/constraints';
 interface VenueDetailProps{
     venueDetailProps:VenueDetail
@@ -12,6 +12,8 @@ const VenueDetailComponent: React.FC<VenueDetailProps> = ({venueDetailProps})=>{
     const [openHourExpanded,setOpenHourExpanded]=useState(false);
     const [generalRuleExpanded,setGeneralRuleExpanded]=useState(false);
     const [childRuleExpanded,setChildRuleExpanded]=useState(false);
+    const [showGoogleMap, setShowGoogleMap]=useState(false);
+
     const mapOptions={
         center: {lat:parseFloat(venueDetailProps.lat),lng: parseFloat(venueDetailProps.lng)}
     };
@@ -19,6 +21,11 @@ const VenueDetailComponent: React.FC<VenueDetailProps> = ({venueDetailProps})=>{
         lat: parseFloat(venueDetailProps.lat),
         lng: parseFloat(venueDetailProps.lng)
     };
+
+    const {isLoaded} = useLoadScript({
+        googleMapsApiKey : CONSTRAINTS.GOOGLE_TOKEN,
+    });
+
     
 
     return (
@@ -152,12 +159,13 @@ const VenueDetailComponent: React.FC<VenueDetailProps> = ({venueDetailProps})=>{
         </Row>
         <Row className='mt-5 mb-3'>
             <Col sm={12} className="text-center align-items-center">
-                <Button className="btn-danger" data-toggle="modal" data-target="modal" style={{fontSize:"18px"}}> 
+                <Button className="btn-danger" onClick={()=>setShowGoogleMap(true)} style={{fontSize:"18px"}}> 
                     Show venue on Google map
                 </Button>
             </Col>
         </Row>
-        <div className='modal fade' id="modal" tabIndex={-1} role="dialog" aria-labelledby='modalLabel' aria-hidden="true">
+        {showGoogleMap && isLoaded &&
+        <div  className={`modal fade ${showGoogleMap ? 'show' : ''}`} id="modal" tabIndex={-1} role="dialog" aria-labelledby='modalLabel' aria-hidden={!showGoogleMap} style={{ display: showGoogleMap ? 'block' : 'none' }}>
             <div className='modal-dialog' role="document">
                 <div className="modal-content">
                     <div className='modal-header'>
@@ -168,21 +176,27 @@ const VenueDetailComponent: React.FC<VenueDetailProps> = ({venueDetailProps})=>{
                     <div className='modal-body'>
                         <Row>
                             <Col sm={12} className="my-google-map">
-                                <LoadScript googleMapsApiKey={CONSTRAINTS.GOOGLE_TOKEN}>
+            
                                     <GoogleMap
+                                        mapContainerClassName='map-container'
+                                        center={mapOptions.center}
+                                        zoom={15}
                                         mapContainerStyle={{width:"auto",height:"400px"}}
-                                        options={mapOptions}
                                     >
                                     <Marker position={markerPosition}></Marker>
                                     </GoogleMap>
-                                </LoadScript>
+        
                             </Col>
                         </Row>
                     </div>
+                    <div className="modal-footer" style={{justifyContent: "flex-start"}}>
+                        <button type="button" className="btn btn-dark " onClick={()=>setShowGoogleMap(false)}>Close</button>
+                    </div> 
                 </div>
             </div>
         </div>
-        </>
+}
+    </>
     );
 }
 

@@ -19,8 +19,8 @@ const ArtistDetailComponent:React.FC<ArtistDetailProps>=({artistDetailProps})=>{
     
             <Carousel  activeIndex={activeIndex} onSelect={handleSelect}>
         
-                {artistDetailProps.map((artistDetail)=>(
-                    <Carousel.Item className='artist pl-5 pr-5'>
+                {artistDetailProps.map((artistDetail,index)=>(
+                    <Carousel.Item key={index} className='artist pl-5 pr-5'>
                         <Row className="mt-3 ml-3 mr-3">
                             <Col md={3} className="text-center">
                                 <img src={artistDetail.artistImg} alt="No image" style={{borderRadius:"50%",width:"120px",height:"120px"}}/>
