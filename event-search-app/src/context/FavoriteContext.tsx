@@ -1,4 +1,5 @@
 import { useContext,createContext,ReactNode, useState } from "react"
+import { useLocalStorage } from "../hooks/useLocalStorage";
 const FavoriteContext= createContext({} as FavoriteContext);
 export const useFavoriteContext= ()=>{
     return useContext(FavoriteContext);
@@ -6,7 +7,7 @@ export const useFavoriteContext= ()=>{
 type FavoriteProviderProps={
     children: ReactNode
 }
-type Favorite={
+export type Favorite={
     id: string,
     date: string,
     event:string,
@@ -20,7 +21,7 @@ type FavoriteContext={
     isFavorite: (id:string)=> boolean
 }
 export const FavoriteProvider=({ children }: FavoriteProviderProps)=>{
-    const [favoriteItems,setFavoriteItems]=useState<Favorite[]>([]);
+    const [favoriteItems,setFavoriteItems]=useLocalStorage<Favorite[]>("favorites",[]);
     const addToFavorite=(favorite:Favorite)=>{
         const newFavoriteItems=[...favoriteItems,favorite];
         setFavoriteItems(newFavoriteItems);
